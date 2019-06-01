@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+import { get } from 'http';
 
 class App extends Component {
   constructor(props) {
@@ -12,11 +13,31 @@ class App extends Component {
     };
   }
 
-  async login() {}
+  async login() {
+    let {email, password} = this.state; 
+    let res = await axios.post('/auth/login', {
+      email, 
+      password
+    }); // The body is an object with our email and password from state assigned as properties on the object.
 
-  async signup() {}
+    this.setState({loggedInUser: res.data, email: '', password: ''}); 
+  } // When the response comes back, we set the returned user on state and reset the username and password fields.
 
-  logout() {}
+
+  async signup() {
+    let {email, password} = this.state; 
+    let res = await axios.post('/auth/signup', {
+       email,
+       password
+      }); 
+    this.setState({loggedInUser: res.data, email: '', password: ''}); 
+  } // It makes the post request, sets the returned user on state, and resets the input fields.
+
+
+  logout() {
+    axios.get('/auth/logout');
+    this.setState({ loggedInUser: {} });
+  } //logout functionality sets the loggedInUser on state back to an empty object 
 
   render() {
     let { loggedInUser, email, password } = this.state;
